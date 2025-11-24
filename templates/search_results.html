@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}ผลการค้นหา: {{ query }} - MySeriesVideo{% endblock %}
+
+{% block content %}
+  <section class="series-section">
+    <div class="series-header">
+      <div>
+        <h1>ผลการค้นหา</h1>
+        <p class="subtitle">
+          ค้นหาคำว่า: <strong>{{ query }}</strong>
+          {% if main_keyword and main_keyword != query %}
+            <br /><span class="hint">คำหลักที่ใช้จัดอันดับ: "{{ main_keyword }}"</span>
+          {% endif %}
+        </p>
+      </div>
+    </div>
+
+    {% if series_list %}
+      <div class="series-grid">
+        {% for s in series_list %}
+          <article class="series-card">
+            <a href="{{ url_for('series_detail', series_id=s['id']) }}" class="series-cover-link">
+              {% if s['thumbnail_url'] %}
+                {% set thumb = s['thumbnail_url'] %}
+                {% if thumb.startswith('http') %}
+                  <img src="{{ thumb }}" alt="{{ s['title'] }}" class="series-cover" />
+                {% else %}
+                  <img src="{{ url_for('static', filename=thumb) }}" alt="{{ s['title'] }}" class="series-cover" />
+                {% endif %}
+              {% else %}
+                <div class="series-cover placeholder">
+                  <span>{{ s['title'][:1] }}</span>
+                </div>
+              {% endif %}
+            </a>
+            <div class="series-card-body">
+              <h2>{{ s['title'] }}</h2>
+              {% if s['description'] %}
+                <p class="series-desc">{{ s['description'] }}</p>
+              {% endif %}
+              <a href="{{ url_for('series_detail', series_id=s['id']) }}" class="btn primary-btn small">
+                ดูตอนของเรื่องนี้
+              </a>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>ไม่พบเรื่องที่ตรงกับคำค้นหา ลองเปลี่ยนคำค้นหาดูนะ</p>
+    {% endif %}
+  </section>
+{% endblock %}
