@@ -1,0 +1,38 @@
+
+{% extends "base.html" %}
+{% block title %}ดูวิดีโอ - {{ video['title'] }}{% endblock %}
+
+{% block content %}
+<div class="watch-page">
+  <div class="player-wrapper">
+    <video controls class="video-player">
+      {% if video['file_path'] %}
+        <source src="{{ url_for('stream_video', video_id=video['id']) }}" type="video/mp4" />
+      {% elif video['video_url'] %}
+        <source src="{{ video['video_url'] }}" type="video/mp4" />
+      {% endif %}
+      เบราว์เซอร์ของคุณไม่รองรับการเล่นวิดีโอ
+    </video>
+  </div>
+
+  <div class="video-info">
+    <h1>{{ video['title'] }}</h1>
+    {% if video['description'] %}
+      <p>{{ video['description'] }}</p>
+    {% endif %}
+    <p class="meta">เพิ่มเมื่อ: {{ video['created_at'] }}</p>
+    <p class="meta">
+      แหล่งที่มา:
+      {% if video['source_type'] == 'direct' %}
+        ลิงก์ mp4 โดยตรง (โหมด A)
+      {% elif video['source_type'] == 'gdrive' %}
+        ดาวน์โหลดจาก Google Drive (โหมด B)
+      {% elif video['source_type'] == 'upload' %}
+        อัปโหลดไฟล์จากเครื่อง (โหมด C)
+      {% else %}
+        อื่น ๆ
+      {% endif %}
+    </p>
+  </div>
+</div>
+{% endblock %}
