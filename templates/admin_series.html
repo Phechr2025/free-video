@@ -1,0 +1,97 @@
+
+{% extends "base.html" %}
+{% block title %}จัดการเรื่องทั้งหมด{% endblock %}
+
+{% block content %}
+<h1>จัดการเรื่องทั้งหมด</h1>
+
+<h2>เพิ่มเรื่องใหม่</h2>
+<form method="post" class="form" enctype="multipart/form-data">
+  <label for="title">ชื่อเรื่อง *</label>
+  <input type="text" id="title" name="title" required />
+
+  <label for="description">คำอธิบาย</label>
+  <textarea id="description" name="description" rows="3"></textarea>
+
+  <label for="thumbnail_url">ลิงก์รูปปก (ถ้ามีจากเน็ต)</label>
+  <input type="url" id="thumbnail_url" name="thumbnail_url" />
+
+  <label for="cover_file">หรืออัปโหลดรูปปกจากมือถือ</label>
+  <input type="file" id="cover_file" name="cover_file" accept="image/*" />
+
+  <p class="hint">
+    ถ้าใส่ทั้ง "ลิงก์รูปปก" และ "อัปโหลดรูป" ระบบจะใช้ "รูปที่อัปโหลด" เป็นหลัก
+  </p>
+
+  <button type="submit" class="btn primary">บันทึกเรื่องใหม่</button>
+</form>
+
+<h2 style="margin-top:2rem;">รายการเรื่องในระบบ</h2>
+
+{% if series_list %}
+  <ul class="series-admin-list">
+    {% for s in series_list %}
+      <li class="series-admin-item">
+        <div class="series-admin-main">
+          <div class="series-admin-title">{{ s['title'] }}</div>
+          {% if s['description'] %}
+            <div class="series-admin-desc">
+              {{ s['description'][:120] }}{% if s['description']|length > 120 %}...{% endif %}
+            </div>
+          {% endif %}
+          <div class="series-status">
+            สถานะ:
+            {% if s.get('is_active', 1) %}
+              <span style="color:#0c0;">เปิดให้ดู</span>
+            {% else %}
+              <span style="color:#c00;">ปิดการให้ดูชั่วคราว</span>
+            {% endif %}
+          </div>
+        </div>
+        <div class="series-admin-actions">
+          <!-- ปุ่มเปิด/ปิดทันที -->
+          <form method="post" action="{{ url_for('admin_toggle_series', series_id=s['id']) }}" style="display:inline;">
+            <button type="submit" class="btn">
+              {% if s.get('is_active', 1) %}ปิดการดู{% else %}เปิดการดู{% endif %}
+            </button>
+          </form>
+
+          <!-- ตั้งเวลาแบบ HH:MM -->
+          <form method="post" action="{{ url_for('admin_series_schedule_time', series_id=s['id']) }}" style="display:inline;">
+            <input type="time" name="time" required />
+            <select name="action">
+              <option value="close">ปิด</option>
+              <option value="open">เปิด</option>
+            </select>
+            <button type="submit" class="btn">ตั้งเวลา</button>
+          </form>
+
+          <!-- ตั้งนับถอยหลัง (นาที) -->
+          <form method="post" action="{{ url_for('admin_series_schedule_countdown', series_id=s['id']) }}" style="display:inline;">
+            <input type="number" name="minutes" min="1" placeholder="นาที" required />
+            <select name="action">
+              <option value="close">ปิด</option>
+              <option value="open">เปิด</option>
+            </select>
+            <button type="submit" class="btn">นับถอยหลัง</button>
+          </form>
+
+          <!-- ยกเลิกการตั้งเวลา -->
+          <form method="post" action="{{ url_for('admin_series_cancel_schedule', series_id=s['id']) }}" style="display:inline;">
+            <button type="submit" class="btn danger">ยกเลิกการตั้งเวลา</button>
+          </form>
+
+          <!-- ปุ่มเดิม -->
+          <a class="btn" href="{{ url_for('admin_episodes', series_id=s['id']) }}">จัดการตอน</a>
+          <a class="btn" href="{{ url_for('admin_edit_series', series_id=s['id']) }}">แก้ไขเรื่อง</a>
+          <form method="post" action="{{ url_for('admin_delete_series', series_id=s['id']) }}" style="display:inline;" onsubmit="return confirm('ยืนยันการลบเรื่องนี้และตอนทั้งหมด?');">
+            <button type="submit" class="btn danger">ลบเรื่อง</button>
+          </form>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>ยังไม่มีเรื่องในระบบ</p>
+{% endif %}
+{% endblock %}
