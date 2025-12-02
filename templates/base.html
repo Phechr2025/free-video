@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>{% block title %}เว็บดูวิดีโอแบบแยกเรื่อง{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-left">
+      <a href="{{ url_for('index') }}" class="brand">MySeriesVideo</a>
+    </div>
+    <nav class="nav-right">
+      {% if session.get("is_admin") %}
+        <a href="{{ url_for('admin_series') }}">จัดการเรื่อง</a>
+        <a href="{{ url_for('admin_backup') }}">สำรอง/คืนค่า</a>
+        <a href="{{ url_for('admin_account') }}">บัญชีแอดมิน</a>
+        <a href="{{ url_for('admin_logout') }}">ออกจากระบบแอดมิน</a>
+      {% else %}
+        <a href="{{ url_for('admin_login') }}">สำหรับแอดมิน</a>
+      {% endif %}
+    </nav>
+  </header>
+
+<form class="search-form" action="{{ url_for('search') }}" method="get">
+  <input
+    type="text"
+    name="q"
+    class="search-input"
+    placeholder="ค้นหาเรื่อง เช่น มหาเวทย์ผนึกมาร S2"
+    value="{{ request.args.get('q','') if request.endpoint == 'search' else '' }}"
+    required
+  />
+  <button type="submit" class="btn search-btn">ค้นหา</button>
+</form>
+
+
+  <main class="container">
+    {% if request.endpoint != 'index' %}
+      <div class="back-row">
+        <button type="button" class="btn back-btn" onclick="window.history.back();">ย้อนกลับ</button>
+      </div>
+    {% endif %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-container">
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <p>© 2025 MySeriesVideo</p>
+  </footer>
+</body>
+</html>
