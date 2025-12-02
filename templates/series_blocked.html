@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>เรื่องนี้ถูกปิดการให้ดูชั่วคราว</title>
+  <style>
+    body {
+      background: #070b12;
+      color: #fff;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .blocked-box {
+      background: #141826;
+      padding: 24px 20px;
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+      width: 92%;
+      max-width: 420px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .blocked-title {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    .blocked-text {
+      font-size: 14px;
+      color: #c5c8d4;
+      margin-bottom: 20px;
+    }
+    .blocked-button {
+      padding: 10px 20px;
+      font-size: 15px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: #ff4757;
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 6px 18px rgba(255,71,87,0.45);
+    }
+    .blocked-button:active {
+      transform: translateY(1px);
+      box-shadow: 0 3px 10px rgba(255,71,87,0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="blocked-box">
+    <div class="blocked-title">เรื่องนี้ถูกปิดการให้ดูชั่วคราว</div>
+    <div class="blocked-text">
+      เนื้อหานี้ถูกปิดการรับชมชั่วคราวโดยผู้ดูแลระบบ<br>
+      กรุณากลับมาตรวจสอบอีกครั้งในภายหลัง
+    </div>
+    <button class="blocked-button" onclick="window.location.href='{{ url_for('index') }}'">
+      ตกลง
+    </button>
+  </div>
+</body>
+</html>
