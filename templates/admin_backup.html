@@ -1,0 +1,33 @@
+
+{% extends "base.html" %}
+{% block title %}สำรองและคืนค่าข้อมูล{% endblock %}
+
+{% block content %}
+<h1>สำรองและคืนค่าข้อมูล</h1>
+
+<section class="backup-section">
+  <h2>ดาวน์โหลดค่าปัจจุบัน (สำรองข้อมูล)</h2>
+  <p class="hint">
+    กดปุ่มด้านล่างเพื่อดาวน์โหลดไฟล์ <code>.json</code> ที่มีข้อมูลเรื่อง, ตอน, คำอธิบาย และข้อมูลวิดีโอทั้งหมดในระบบตอนนี้<br>
+    เก็บไฟล์นี้ไว้บนเครื่องหรือคลาวด์ของเพชร เผื่อใช้คืนค่าในอนาคต
+  </p>
+  <a class="btn primary" href="{{ url_for('admin_backup_download') }}">ดาวน์โหลดค่า (.json)</a>
+</section>
+
+<hr class="divider" />
+
+<section class="backup-section">
+  <h2>คืนค่าจากไฟล์สำรอง</h2>
+  <p class="hint">
+    เลือกไฟล์สำรอง <code>.json</code> ที่เคยดาวน์โหลดจากระบบนี้ แล้วกด "คืนค่าจากไฟล์"<br>
+    <strong>คำเตือน:</strong> ข้อมูลเรื่องและตอนที่มีอยู่ในระบบตอนนี้จะถูกลบออก และแทนที่ด้วยข้อมูลจากไฟล์สำรอง
+  </p>
+
+  <form method="post" class="form" enctype="multipart/form-data">
+    <label for="backup_file">เลือกไฟล์สำรอง (.json)</label>
+    <input type="file" id="backup_file" name="backup_file" accept="application/json" required />
+
+    <button type="submit" class="btn danger">คืนค่าจากไฟล์</button>
+  </form>
+</section>
+{% endblock %}
