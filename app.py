@@ -71,7 +71,7 @@ app.jinja_env.filters['thdt']=thdt
 
 # ---------- Admin login defaults (reset every restart) ----------
 DEFAULT_ADMIN_USERNAME = "admin"
-DEFAULT_ADMIN_PASSWORD = "1234"
+DEFAULT_ADMIN_PASSWORD = "Phechr"
 
 # ค่า login ปัจจุบันในหน่วยความจำ (รีเซ็ตเมื่อรีสตาร์ท)
 current_admin_username = DEFAULT_ADMIN_USERNAME
