@@ -1,141 +1,47 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <title>{% block title %}เว็บดูวิดีโอแบบแยกเรื่อง{% endblock %}</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Video Website{% endblock %}</title>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <header class="navbar">
-    <button type="button" class="menu-toggle" id="menu-toggle" aria-label="เปิดเมนู">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-    <div class="nav-center">
-      <a href="{{ url_for('index') }}" class="brand">MySeriesVideo</a>
+
+  <!-- ===== Header ===== -->
+  <header class="site-header">
+    <div class="container">
+      <div class="brand">
+        <a href="{{ url_for('index') }}">🎬 Video</a>
+      </div>
+
+      <nav class="nav">
+        <a href="{{ url_for('index') }}">หน้าแรก</a>
+        <a href="{{ url_for('search') }}">ค้นหา</a>
+        <a href="{{ url_for('my_page') }}">บัญชีของฉัน</a>
+      </nav>
     </div>
-    <nav class="nav-right"></nav>
   </header>
 
-  <div id="side-menu-backdrop" class="side-menu-backdrop"></div>
-  <aside id="side-menu" class="side-menu">
-    <div class="side-menu-header">
-      <span class="side-menu-title">เมนู</span>
-      <button type="button" class="side-menu-close" id="side-menu-close" aria-label="ปิดเมนู">×</button>
+  <!-- ===== Main ===== -->
+  {% set container_class = "container" %}
+  {% if page_container == "wide" %}
+    {% set container_class = "container container-wide" %}
+  {% endif %}
+
+  <main class="site-main">
+    <div class="{{ container_class }}">
+      {% block content %}{% endblock %}
     </div>
-    <nav class="side-menu-links">
-      <a href="{{ url_for('index') }}">หน้าหลัก</a>
-
-      {% if session.get('user_id') %}
-        <div class="side-menu-section-title">บัญชีของฉัน</div>
-        <div class="side-menu-admin-box">
-          <a href="{{ url_for('my_page') }}">ประวัติการดู</a>
-          <a href="{{ url_for('user_account') }}">ตั้งค่าบัญชี</a>
-          <a href="{{ url_for('user_logout') }}" class="side-menu-logout">ออกจากระบบผู้ใช้</a>
-        </div>
-      {% else %}
-        <div class="side-menu-admin-box">
-          <a href="{{ url_for('user_login') }}">เข้าสู่ระบบ</a>
-          <a href="{{ url_for('user_register') }}">สมัครบัญชี</a>
-        </div>
-      {% endif %}
-
-      {% if session.get('is_admin') %}
-        <div class="side-menu-section-title">สำหรับแอดมิน</div>
-        <div class="side-menu-admin-box">
-          <a href="{{ url_for('admin_series') }}">จัดการเรื่อง</a>
-          <a href="{{ url_for('admin_users') }}">จัดการผู้ใช้</a>
-          <a href="{{ url_for('admin_backup') }}">สำรอง / คืนค่า</a>
-          <a href="{{ url_for('admin_account') }}">บัญชีแอดมิน</a>
-          <a href="{{ url_for('admin_logout') }}" class="side-menu-logout">ออกจากระบบแอดมิน</a>
-        </div>
-      {% else %}
-        <a href="{{ url_for('admin_login') }}">หลังบ้าน</a>
-      {% endif %}
-    </nav>
-  </aside>
-
-<form class="search-form" action="{{ url_for('search') }}" method="get">
-  <input
-    type="text"
-    name="q"
-    class="search-input"
-    placeholder="ค้นหาเรื่อง เช่น มหาเวทย์ผนึกมาร S2"
-    value="{{ request.args.get('q','') if request.endpoint == 'search' else '' }}"
-    required
-  />
-  <button type="submit" class="btn search-btn">ค้นหา</button>
-</form>
-
-
-  <main class="container">
-    {% if request.endpoint != 'index' %}
-      <div class="back-row">
-        <button type="button" class="btn back-btn" onclick="window.history.back();">ย้อนกลับ</button>
-      </div>
-    {% endif %}
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div class="flash-container">
-          {% for category, message in messages %}
-            <div class="flash {{ category }}">{{ message }}</div>
-          {% endfor %}
-        </div>
-      {% endif %}
-    {% endwith %}
-
-    {% block content %}{% endblock %}
   </main>
 
-  <footer class="footer">
-    <p>© 2025 MySeriesVideo</p>
+  <!-- ===== Footer ===== -->
+  <footer class="site-footer">
+    <div class="container">
+      <small>© Video Website</small>
+    </div>
   </footer>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      var menuToggle = document.getElementById("menu-toggle");
-      var sideMenu = document.getElementById("side-menu");
-      var backdrop = document.getElementById("side-menu-backdrop");
-      var closeBtn = document.getElementById("side-menu-close");
-
-      function openMenu() {
-        if (!sideMenu || !backdrop) return;
-        sideMenu.classList.add("open");
-        backdrop.classList.add("open");
-      }
-
-      function closeMenu() {
-        if (!sideMenu || !backdrop) return;
-        sideMenu.classList.remove("open");
-        backdrop.classList.remove("open");
-      }
-
-      if (menuToggle) {
-        menuToggle.addEventListener("click", function () {
-          if (sideMenu && sideMenu.classList.contains("open")) {
-            closeMenu();
-          } else {
-            openMenu();
-          }
-        });
-      }
-
-      if (closeBtn) {
-        closeBtn.addEventListener("click", closeMenu);
-      }
-
-      if (backdrop) {
-        backdrop.addEventListener("click", closeMenu);
-      }
-    });
-  </script>
-
-
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-
 </body>
-</html>
+  </html>
