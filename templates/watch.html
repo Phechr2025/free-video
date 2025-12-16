@@ -1,53 +1,40 @@
 {% extends "base.html" %}
-{% block title %}{{ series['title'] }} - {{ episode['title'] }}{% endblock %}
+{% set page_container = "wide" %}
+
+{% block title %}
+{{ episode_title if episode_title else "Watch Video" }}
+{% endblock %}
 
 {% block content %}
-<div class="breadcrumb">
-  <a href="{{ url_for('index') }}">หน้าหลัก</a> /
-  <a href="{{ url_for('series_detail', series_id=series['id']) }}">{{ series['title'] }}</a> /
-  <span>{{ episode['title'] }}</span>
-</div>
 
 <div class="watch-page">
-  {% if blocked %}
-    <div class="blocked-box">
-      <h2>ปิดการให้ดูชั่วคราว</h2>
-      <p>เนื้อหานี้ถูกปิดการรับชมชั่วคราวโดยผู้ดูแลระบบ</p>
-    </div>
-  {% else %}
-    <div class="player-wrapper">
-      <video
-      controls
-      class="video-player"
-      controlslist="nodownload noplaybackrate"
-      disablepictureinpicture
-      oncontextmenu="return false;"
-    >
-      {% if episode['file_path'] %}
-        <source src="{{ url_for('stream_episode', episode_id=episode['id']) }}" type="video/mp4" />
-      {% elif episode['video_url'] %}
-        <source src="{{ episode['video_url'] }}" type="video/mp4" />
-      {% endif %}
+
+  <!-- 🎬 Video Player -->
+  <div class="player-frame">
+    <video class="video-player"
+           controls
+           playsinline
+           preload="metadata">
+      <source src="{{ video_url }}" type="video/mp4">
       เบราว์เซอร์ของคุณไม่รองรับการเล่นวิดีโอ
     </video>
   </div>
-  {% endif %}
 
-  <div class="video-info">
-    <h1>
-      {% if episode['episode_number'] %}
-        ตอนที่ {{ episode['episode_number'] }}:
-      {% endif %}
-      {{ episode['title'] }}
-    </h1>
-    {% if episode['description'] %}
-      <p>{{ episode['description'] }}</p>
+  <!-- ℹ️ Video Info -->
+  <div class="watch-meta">
+    {% if episode_title %}
+      <h1 class="watch-title">{{ episode_title }}</h1>
     {% endif %}
-    <p class="meta">
-      เรื่อง: {{ series['title'] }}<br>
-      เพิ่มเมื่อ: {{ episode['created_at']|thdt }}
-    </p>
-    
+
+    {% if series_name %}
+      <div class="watch-subtitle">{{ series_name }}</div>
+    {% endif %}
+
+    {% if description %}
+      <p class="watch-desc">{{ description }}</p>
+    {% endif %}
   </div>
+
 </div>
+
 {% endblock %}
