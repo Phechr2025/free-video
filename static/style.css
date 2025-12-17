@@ -629,3 +629,66 @@ list-style: none;
 .history-item a {
   color: #bfdbfe;
 }
+
+/* ================================================= */
+/* FIX WATCH PAGE VIDEO – DESKTOP ONLY               */
+/* ================================================= */
+
+/* บังคับให้ช่อง player มีความสูงจริง */
+.watch-page {
+  align-items: start;
+}
+
+/* กล่องครอบวิดีโอ */
+.player-wrapper {
+  position: relative;
+  width: 100%;
+  background: #000;
+  overflow: hidden;
+
+  /* สำคัญที่สุด */
+  aspect-ratio: 16 / 9;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ป้องกันกรอบเตี้ยบน PC */
+@media (min-width: 1024px) {
+  .player-wrapper {
+    min-height: 520px;
+  }
+}
+
+/* ตัววิดีโอจริง */
+.video-player {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100%;
+  max-height: 100%;
+
+  display: block;
+  object-fit: contain;
+  background: #000;
+}
+
+/* กัน pseudo-element / overlay บังภาพ */
+.player-wrapper::before,
+.player-wrapper::after {
+  content: none !important;
+}
+
+/* ================================================= */
+/* MOBILE – คงพฤติกรรมเดิม                           */
+/* ================================================= */
+@media (max-width: 768px) {
+  .player-wrapper {
+    aspect-ratio: auto;
+    min-height: unset;
+  }
+
+  .video-player {
+    height: auto !important;
+  }
+}
