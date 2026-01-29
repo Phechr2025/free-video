@@ -1,4 +1,4 @@
-
+import subprocess
 import os
 import sqlite3
 import json
@@ -19,6 +19,27 @@ app = Flask(__name__)
 
 TURNSTILE_SITE_KEY = os.getenv("TURNSTILE_SITE_KEY", "")
 TURNSTILE_SECRET_KEY = os.getenv("TURNSTILE_SECRET_KEY", "")
+
+def convert_to_hls(mp4_path, hls_dir):
+    os.makedirs(hls_dir, exist_ok=True)
+
+    m3u8_path = os.path.join(hls_dir, "index.m3u8")
+    if os.path.exists(m3u8_path):
+        return  # แปลงแล้ว ไม่ต้องทำซ้ำ
+
+    cmd = [
+        "ffmpeg",
+        "-i", mp4_path,
+        "-c:v", "libx264",
+        "-c:a", "aac",
+        "-hls_time", "10",
+        "-hls_list_size", "0",
+        "-hls_segment_filename",
+        os.path.join(hls_dir, "seg_%03d.ts"),
+        m3u8_path
+    ]
+
+    subprocess.run(cmd, check=True)
 
 
 def verify_turnstile(token, remote_ip=None):
