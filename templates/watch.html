@@ -1,13 +1,3 @@
-{% extends "base.html" %}
-{% block title %}{{ series['title'] }} - {{ episode['title'] }}{% endblock %}
-
-{% block content %}
-<div class="breadcrumb">
-  <a href="{{ url_for('index') }}">หน้าหลัก</a> /
-  <a href="{{ url_for('series_detail', series_id=series['id']) }}">{{ series['title'] }}</a> /
-  <span>{{ episode['title'] }}</span>
-</div>
-
 <div class="watch-page">
   {% if blocked %}
     <div class="blocked-box">
@@ -17,37 +7,30 @@
   {% else %}
     <div class="player-wrapper">
       <video
-      controls
-      class="video-player"
-      controlslist="nodownload noplaybackrate"
-      disablepictureinpicture
-      oncontextmenu="return false;"
-    >
-      {% if episode['file_path'] %}
-        <source src="{{ url_for('stream_episode', episode_id=episode['id']) }}" type="video/mp4" />
-      {% elif episode['video_url'] %}
-        <source src="{{ episode['video_url'] }}" type="video/mp4" />
-      {% endif %}
-      เบราว์เซอร์ของคุณไม่รองรับการเล่นวิดีโอ
-    </video>
-  </div>
-  {% endif %}
+        controls
+        class="video-player"
+        playsinline
+        webkit-playsinline
+        preload="metadata"
+        controlslist="nodownload noplaybackrate"
+        disablepictureinpicture
+        oncontextmenu="return false;"
+      >
 
-  <div class="video-info">
-    <h1>
-      {% if episode['episode_number'] %}
-        ตอนที่ {{ episode['episode_number'] }}:
-      {% endif %}
-      {{ episode['title'] }}
-    </h1>
-    {% if episode['description'] %}
-      <p>{{ episode['description'] }}</p>
-    {% endif %}
-    <p class="meta">
-      เรื่อง: {{ series['title'] }}<br>
-      เพิ่มเมื่อ: {{ episode['created_at']|thdt }}
-    </p>
-    
-  </div>
+        {# ✅ ถ้ามี HLS → ใช้ HLS ก่อน #}
+        {% if hls_url %}
+          <source src="{{ hls_url }}" type="application/x-mpegURL">
+
+        {# 🔁 fallback ใช้ระบบเดิม #}
+        {% elif episode['file_path'] %}
+          <source src="{{ url_for('stream_episode', episode_id=episode['id']) }}" type="video/mp4">
+
+        {% elif episode['video_url'] %}
+          <source src="{{ episode['video_url'] }}" type="video/mp4">
+        {% endif %}
+
+        เบราว์เซอร์ของคุณไม่รองรับการเล่นวิดีโอ
+      </video>
+    </div>
+  {% endif %}
 </div>
-{% endblock %}
